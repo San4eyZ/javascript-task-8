@@ -13,12 +13,12 @@ function execute() {
     const { action, from, to, text } = processArgs(args);
     const url = makeUrl(from, to);
 
-    if (!action) {
-        throw new Error('Не указана команда');
-    }
-    if (action === 'send' && !text) {
-        throw new Error('Не введен текст сообщения');
-    }
+    // if (!action) {
+    //     throw new Error('Не указана команда');
+    // }
+    // if (action === 'send' && !text) {
+    //     throw new Error('Не введен текст сообщения');
+    // }
 
     let options = {
         hostname: 'localhost',

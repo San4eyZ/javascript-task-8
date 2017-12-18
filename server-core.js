@@ -9,10 +9,10 @@ let storedMessages = [];
 const server = http.createServer((req, res) => {
     const urlObj = parseUrl(req.url);
     if (urlObj.pathname === '/favicon.ico') {
-        return sendNotFound(res);
+        return sendNotFound(res, 'Favicon Not Found');
     }
     if (urlObj.pathname !== '/messages') {
-        return sendNotFound(res);
+        return sendNotFound(res, 'Page Not Found');
     }
 
     const { from, to } = parseQuery(urlObj.query);
@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, { 'Content-type': 'application/json' });
             res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
         } catch (e) {
-            return sendNotFound(res);
+            return sendNotFound(res, e.message);
         }
         res.end();
     }
@@ -66,9 +66,9 @@ function formatMessage(from, to, text) {
     return JSON.stringify({ from, to, text });
 }
 
-function sendNotFound(response) {
+function sendNotFound(response, message) {
     response.writeHead(404, { 'Content-Type': 'text/plain' });
-    response.end('404 Not Found');
+    response.end(message);
 }
 
 module.exports = server;
