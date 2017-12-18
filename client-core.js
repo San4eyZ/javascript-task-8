@@ -17,7 +17,7 @@ function execute() {
         return Promise.reject('Не указана команда');
     }
     if (action === 'send' && !text) {
-        throw Promise.reject('Не введен текст сообщения');
+        return Promise.reject('Не введен текст сообщения');
     }
 
     let options = {
