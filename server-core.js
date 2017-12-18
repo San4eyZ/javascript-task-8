@@ -14,7 +14,6 @@ const server = http.createServer((req, res) => {
         if (req.method === 'GET') {
             res.writeHead(200, { 'Content-type': 'application/json' });
             res.write(JSON.stringify(getMessages(from, to, storedMessages)));
-
             res.end();
         }
 
@@ -27,7 +26,8 @@ const server = http.createServer((req, res) => {
 
                 storedMessages.push(message);
                 res.writeHead(200, { 'Content-type': 'application/json' });
-                res.end(JSON.stringify(message));
+                res.write(JSON.stringify(message));
+                res.end();
             });
         }
     } else {
