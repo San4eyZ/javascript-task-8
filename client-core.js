@@ -14,10 +14,10 @@ function execute() {
     const url = makeUrl(from, to);
 
     if (!action) {
-        throw new Error('Не указана команда');
+        return Promise.reject('Не указана команда');
     }
     if (action === 'send' && !text) {
-        throw new Error('Не введен текст сообщения');
+        throw Promise.reject('Не введен текст сообщения');
     }
 
     let options = {
