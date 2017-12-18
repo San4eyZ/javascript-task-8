@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
 
         if (req.method === 'GET') {
             res.writeHead(200, { 'Content-type': 'application/json' });
-            res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
+            res.write(JSON.stringify(getMessages(from, to, storedMessages)));
 
             res.end();
         }
@@ -27,7 +27,7 @@ const server = http.createServer((req, res) => {
 
                 storedMessages.push(message);
                 res.writeHead(200, { 'Content-type': 'application/json' });
-                res.end(message);
+                res.end(JSON.stringify(message));
             });
         }
     } else {
@@ -44,16 +44,16 @@ function getMessages(from, to, messageList) {
 
 function formatMessage(from, to, text) {
     if (!from && !to) {
-        return JSON.stringify({ text });
+        return { text };
     }
     if (!from) {
-        return JSON.stringify({ to, text });
+        return { to, text };
     }
     if (!to) {
-        return JSON.stringify({ from, text });
+        return { from, text };
     }
 
-    return JSON.stringify({ from, to, text });
+    return { from, to, text };
 }
 
 module.exports = server;
