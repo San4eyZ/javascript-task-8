@@ -8,33 +8,31 @@ let storedMessages = [];
 
 const server = http.createServer((req, res) => {
     const urlObj = parseUrl(req.url);
-    if (urlObj.pathname === '/favicon.ico') {
-        return sendNotFound(res, 'Favicon Not Found');
-    }
-    if (urlObj.pathname !== '/messages') {
-        return sendNotFound(res, 'Page Not Found');
-    }
+    if (urlObj.pathname === '/messages') {
+        const { from, to } = parseQuery(urlObj.query);
 
-    const { from, to } = parseQuery(urlObj.query);
-
-    if (req.method === 'GET') {
-        res.writeHead(200, { 'Content-type': 'application/json' });
-        res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
-
-        res.end();
-    }
-
-    if (req.method === 'POST') {
-        let body = '';
-        req.on('data', (chunk) => {
-            body += chunk;
-        }).on('end', () => {
-            let message = formatMessage(from, to, JSON.parse(body).text);
-
-            storedMessages.push(message);
+        if (req.method === 'GET') {
             res.writeHead(200, { 'Content-type': 'application/json' });
-            res.end(message);
-        });
+            res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
+
+            res.end();
+        }
+
+        if (req.method === 'POST') {
+            let body = '';
+            req.on('data', (chunk) => {
+                body += chunk;
+            }).on('end', () => {
+                let message = formatMessage(from, to, JSON.parse(body).text);
+
+                storedMessages.push(message);
+                res.writeHead(200, { 'Content-type': 'application/json' });
+                res.end(message);
+            });
+        }
+    } else {
+        res.statusCode = 404;
+        res.end();
     }
 });
 
@@ -56,11 +54,6 @@ function formatMessage(from, to, text) {
     }
 
     return JSON.stringify({ from, to, text });
-}
-
-function sendNotFound(response, message) {
-    response.writeHead(404, { 'Content-Type': 'text/plain' });
-    response.end(message);
 }
 
 module.exports = server;
