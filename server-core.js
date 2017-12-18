@@ -9,10 +9,10 @@ let storedMessages = [];
 const server = http.createServer((req, res) => {
     const urlObj = parseUrl(req.url);
     if (urlObj.pathname === '/favicon.ico') {
-        sendNotFound(res, 'Favicon Not Found');
+        return sendNotFound(res, 'Favicon Not Found');
     }
     if (urlObj.pathname !== '/messages') {
-        sendNotFound(res, 'Page Not Found');
+        return sendNotFound(res, 'Page Not Found');
     }
 
     const { from, to } = parseQuery(urlObj.query);

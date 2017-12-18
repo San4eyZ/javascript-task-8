@@ -25,7 +25,7 @@ function execute() {
         port: 8080,
         path: url,
         method: action === 'list' ? 'GET' : 'POST',
-        headers: action === 'list' ? {} : { 'Content-Type': 'application/json; charset=utf-8' }
+        headers: action === 'list' ? {} : { 'Content-Type': 'application/json' }
     };
 
     return new Promise((resolve) => {
