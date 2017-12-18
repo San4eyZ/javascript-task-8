@@ -1,11 +1,10 @@
 'use strict';
 
 const http = require('http');
-const fs = require('fs');
 const { parse: parseUrl } = require('url');
 const { parse: parseQuery } = require('querystring');
 
-const messageFile = 'messages.txt';
+let storedMessages = [];
 
 const server = http.createServer((req, res) => {
     const urlObj = parseUrl(req.url);
@@ -19,20 +18,13 @@ const server = http.createServer((req, res) => {
     const { from, to } = parseQuery(urlObj.query);
 
     if (req.method === 'GET') {
-        fs.readFile(messageFile, 'utf-8', (err, content) => {
-            if (err) {
-                return sendNotFound(res);
-            }
-            let messageList = content.split('\n');
-            messageList.pop();
-            try {
-                res.writeHead(200, { 'Content-type': 'application/json' });
-                res.write(JSON.stringify(getMessages(from, to, messageList.map(JSON.parse))));
-            } catch (e) {
-                res.write(e.message);
-            }
-            res.end();
-        });
+        try {
+            res.writeHead(200, { 'Content-type': 'application/json' });
+            res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
+        } catch (e) {
+            res.write(e.message);
+        }
+        res.end();
     }
 
     if (req.method === 'POST') {
@@ -42,7 +34,7 @@ const server = http.createServer((req, res) => {
         }).on('end', () => {
             let message = formatMessage(from, to, JSON.parse(body).text);
 
-            fs.appendFile(messageFile, message + '\n');
+            storedMessages.push(message);
             res.writeHead(200, { 'Content-type': 'application/json' });
             res.end(message);
         });
