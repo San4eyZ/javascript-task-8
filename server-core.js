@@ -9,7 +9,7 @@ let storedMessages = [];
 const server = http.createServer((req, res) => {
     const urlObj = parseUrl(req.url);
     if (urlObj.pathname === '/favicon.ico') {
-        return res.end();
+        return sendNotFound(res);
     }
     if (urlObj.pathname !== '/messages') {
         return sendNotFound(res);
@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, { 'Content-type': 'application/json' });
             res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
         } catch (e) {
-            sendNotFound(res);
+            return sendNotFound(res);
         }
         res.end();
     }
