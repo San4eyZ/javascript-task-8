@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, { 'Content-type': 'application/json' });
             res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
         } catch (e) {
-            res.write(e.message);
+            sendNotFound(res);
         }
         res.end();
     }
