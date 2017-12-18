@@ -18,12 +18,9 @@ const server = http.createServer((req, res) => {
     const { from, to } = parseQuery(urlObj.query);
 
     if (req.method === 'GET') {
-        try {
-            res.writeHead(200, { 'Content-type': 'application/json' });
-            res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
-        } catch (e) {
-            sendNotFound(res, e.message);
-        }
+        res.writeHead(200, { 'Content-type': 'application/json' });
+        res.write(JSON.stringify(getMessages(from, to, storedMessages.map(JSON.parse))));
+
         res.end();
     }
 
@@ -42,14 +39,9 @@ const server = http.createServer((req, res) => {
 });
 
 function getMessages(from, to, messageList) {
-    let filteredMessages = messageList.filter(function (message) {
+    return messageList.filter(function (message) {
         return (from ? message.from === from : true) && (to ? message.to === to : true);
     });
-    if (!filteredMessages.length) {
-        throw new Error('Сообщения не найдены');
-    }
-
-    return filteredMessages;
 }
 
 function formatMessage(from, to, text) {
@@ -68,7 +60,6 @@ function formatMessage(from, to, text) {
 
 function sendNotFound(response, message) {
     response.writeHead(404, { 'Content-Type': 'text/plain' });
-    response.statusCode = 404;
     response.end(message);
 }
 
