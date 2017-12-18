@@ -4,15 +4,12 @@ module.exports.execute = execute;
 module.exports.isStar = false;
 
 const supportedKeys = ['--from', '--to', '--text'];
-// const http = require('http');
 const rp = require('request-promise');
 const chalk = require('chalk');
 
 function execute() {
-    // Внутри этой функции нужно получить и обработать аргументы командной строки
     const args = process.argv.slice(2);
     const { action, from, to, text } = processArgs(args);
-    // const url = makeUrl(from, to);
 
     if (!action) {
         return Promise.reject('Не указана команда');
@@ -21,41 +18,19 @@ function execute() {
         return Promise.reject('Не введен текст сообщения');
     }
 
-    // let options = {
-    //     hostname: 'localhost',
-    //     port: 8080,
-    //     path: url,
-    //     method: action === 'list' ? 'GET' : 'POST',
-    //     headers: action === 'list' ? {} : { 'Content-Type': 'application/json' }
-    // };
-
     let options = {
         url: 'http://localhost:8080/messages',
         method: action === 'list' ? 'GET' : 'POST',
         qs: { from, to },
         body: { text },
         json: true,
-        headers: {
+        headers: action === 'send' ? {
             'Content-type': 'application/json'
-        }
+        } : {}
     };
 
     return rp(options)
         .then(body => forFancyPrint(body));
-    // return new Promise((resolve) => {
-    //     let req = http.request(options, response => {
-    //         let messages = '';
-    //         response.on('data', chunk => {
-    //             messages += chunk;
-    //         }).on('end', () => {
-    //             resolve(forFancyPrint(JSON.parse(messages)));
-    //         });
-    //     });
-    //     if (options.method === 'POST') {
-    //         req.write(`{"text": "${text}"}`);
-    //     }
-    //     req.end();
-    // });
 }
 
 function processArgs(args) {
@@ -79,20 +54,6 @@ function processArgs(args) {
 
     return paramObject;
 }
-
-// function makeUrl(from, to) {
-//     if (!from && !to) {
-//         return '/messages';
-//     }
-//     if (!from) {
-//         return '/messages?to=' + to;
-//     }
-//     if (!to) {
-//         return '/messages?from=' + from;
-//     }
-//
-//     return `/messages?from=${from}&to=${to}`;
-// }
 
 function forFancyPrint(messages) {
     if (messages instanceof Array) {
