@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
         const { from, to } = parseQuery(urlObj.query);
 
         if (req.method === 'GET') {
-            res.writeHead(200, { 'Content-type': 'application/json' });
+            res.setHeader('Content-Type', 'application/json');
             res.write(JSON.stringify(getMessages(from, to, storedMessages)));
             res.end();
         }
@@ -25,7 +25,7 @@ const server = http.createServer((req, res) => {
                 let message = formatMessage(from, to, JSON.parse(body).text);
 
                 storedMessages.push(message);
-                res.writeHead(200, { 'Content-type': 'application/json' });
+                res.setHeader('Content-Type', 'application/json');
                 res.write(JSON.stringify(message));
                 res.end();
             });
