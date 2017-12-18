@@ -67,7 +67,7 @@ function formatMessage(from, to, text) {
 }
 
 function sendNotFound(response, message) {
-    response.writeHead(404, { 'Content-Type': 'text/plain' });
+    response.statusCode = 404;
     response.end(message);
 }
 
